@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import axios from "axios";
-import {Card, Form, Modal, Collapse, Button, CardGroup, DropdownButton,Dropdown} from "react-bootstrap";
+import {Card, Form, Modal, Collapse, Button, CardGroup, DropdownButton, Dropdown} from "react-bootstrap";
 
 import NavBar from "./navBar";
 import Cards from "./cards";
@@ -42,21 +42,22 @@ class Board extends Component {
     }
 
 
-
     handleListAddition = () => {
         let boardId = window.location.href.split('/')[3].split("?")[0]
-        axios.post('https://api.trello.com/1/lists', null, {
-            params: {
-                name: this.state.newListName,
-                idBoard: boardId,
-                key: "9762cda5d8c1ddc1bd0c8aba672a0faa",
-                token: "b04f1f278030c05434b88d797482e54152d6756957424c97daecc04bf6da9571"
-            }
-        }).catch(error => console.error(error))
+        if(this.state.newListName.length!==0){
+            axios.post('https://api.trello.com/1/lists', null, {
+                params: {
+                    name: this.state.newListName,
+                    idBoard: boardId,
+                    key: "9762cda5d8c1ddc1bd0c8aba672a0faa",
+                    token: "b04f1f278030c05434b88d797482e54152d6756957424c97daecc04bf6da9571"
+                }
+            }).catch(error => console.error(error))
+        }
     }
 
     handleListDelete = (id) => {
-        axios.put(`https://api.trello.com/1/lists/${id}/closed?`, null, {
+        axios.put(`https://api.trello.com/1/lists/${id}/closed`, null, {
             params: {
                 key: "9762cda5d8c1ddc1bd0c8aba672a0faa",
                 token: "b04f1f278030c05434b88d797482e54152d6756957424c97daecc04bf6da9571",
@@ -64,23 +65,26 @@ class Board extends Component {
             }
         }).catch(error => console.error(error))
 
-        let newList = this.state.lists.filter(list=>{
-            if(list.id !== id){
+        let newList = this.state.lists.filter(list => {
+            if (list.id !== id) {
                 return list
             }
         })
-        this.setState({lists:newList})
+        this.setState({lists: newList})
     }
 
     handleCardAddition = (id) => {
-        axios.post('https://api.trello.com/1/cards', null, {
-            params: {
-                name: this.state.newCardName,
-                idList: id,
-                key: "9762cda5d8c1ddc1bd0c8aba672a0faa",
-                token: "b04f1f278030c05434b88d797482e54152d6756957424c97daecc04bf6da9571"
-            }
-        }).catch(error => console.error(error))
+        if(this.state.newCardName.length!==0){
+            axios.post('https://api.trello.com/1/cards', null, {
+                params: {
+                    name: this.state.newCardName,
+                    idList: id,
+                    key: "9762cda5d8c1ddc1bd0c8aba672a0faa",
+                    token: "b04f1f278030c05434b88d797482e54152d6756957424c97daecc04bf6da9571"
+                }
+            }).catch(error => console.error(error))
+        }
+
     }
 
 
@@ -91,43 +95,29 @@ class Board extends Component {
                 return (
                     <Card style={{width: '300px', display: "inline-block"}}>
                         <Card.Body>
-                            <Card.Title>
-                                {list.name}
-                                    <div id="listOptions">
-                                <DropdownButton title="options">
-                                    <Dropdown.Item as="button" onClick={() => this.handleListDelete(list.id)}>Delete List</Dropdown.Item>
-                                    <Dropdown.Divider/>
-                                    <Dropdown.Item as="button" onClick={this.handleCardShow}>Add Card</Dropdown.Item>
-                                </DropdownButton>
-                                        <Modal show={this.state.cardShow} onHide={this.handleCardShow}>
-                                            <Modal.Header>
-                                                <Modal.Title>Add Card</Modal.Title>
-                                            </Modal.Header>
-                                            <Modal.Body>
-                                                <Form>
-                                                    <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                                                        <Form.Label>Card Name</Form.Label>
-                                                        <Form.Control
-                                                            type="text"
-                                                            placeholder="Card Name"
-                                                            autoFocus
-                                                            value={this.state.newCardName}
-                                                            onInput={e => this.setState({newCardName: e.target.value})}
-                                                        />
-                                                    </Form.Group>
-                                                    <Button key="add List" variant="primary" type="submit"
-                                                            onClick={() => this.handleCardAddition(list.id)}>
-                                                        Add
-                                                    </Button>
-                                                </Form>
-                                            </Modal.Body>
-                                            <Modal.Footer>
-                                                <Button key="close" variant="secondary"
-                                                        onClick={this.handleCardShow}>Close</Button>
-                                            </Modal.Footer>
-                                        </Modal>
-                                    </div>
-                            </Card.Title>
+                            {list.name}
+                            <DropdownButton title="options">
+                                <Dropdown.Item as="button" onClick={() => this.handleListDelete(list.id)}>Delete
+                                    List</Dropdown.Item>
+                            </DropdownButton>
+                        </Card.Body>
+                        <Card.Body>
+                            <Form>
+                                <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                                    <Form.Label>Add Card</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="Card Name"
+                                        onInput={e => this.setState({newCardName: e.target.value})}
+                                    />
+                                </Form.Group>
+                                <Button key="add List" variant="primary" type="submit"
+                                        onClick={() => this.handleCardAddition(list.id)}>
+                                    Add
+                                </Button>
+                            </Form>
+                        </Card.Body>
+                        <Card.Body>
                             <Cards listId={list.id}/>
                         </Card.Body>
                     </Card>
@@ -137,6 +127,7 @@ class Board extends Component {
         return (
             <>
                 <NavBar/>
+                <br/>
                 <div>
                     <Button variant="primary" key="addBoard" onClick={this.handleShow}>Add List</Button>
                     <Modal show={this.state.show} onHide={this.handleShow}>
@@ -159,20 +150,15 @@ class Board extends Component {
                                         onClick={this.handleListAddition}>
                                     Add
                                 </Button>
+                                <Button key="close" variant="secondary" onClick={this.handleShow} style={{margin:"1%"}}>Close</Button>
                             </Form>
                         </Modal.Body>
-                        <Modal.Footer>
-                            <Button key="close" variant="secondary" onClick={this.handleShow}>Close</Button>
-                        </Modal.Footer>
                     </Modal>
                 </div>
-                <div style={{display: "inline-block", whiteSpace: "nowrap", overflowX: "scroll"}}>
-                    <CardGroup>
-                        {finalElement}
-                    </CardGroup>
-
-                </div>
-
+                <br/>
+                <CardGroup >
+                    {finalElement}
+                </CardGroup>
             </>
         );
     }
