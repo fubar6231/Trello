@@ -47,8 +47,6 @@ class Board extends Component {
             })
             this.setState({lists: newList})
         }).catch(error => console.error(error))
-
-
     }
 
 
@@ -58,7 +56,7 @@ class Board extends Component {
         if (this.state.lists.length !== 0) {
             finalElement = this.state.lists.map((list) => {
                 return (
-                    <Card style={{width: '300px', display: "inline-block"}}>
+                    <Card key={list.id} style={{width: '300px', display: "inline-block"}}>
                         <Card.Body>
                             {list.name}
                             <DropdownButton title="options">
@@ -78,7 +76,7 @@ class Board extends Component {
                 <NavBar/>
                 <br/>
                 <div>
-                    <Button variant="primary" key="addBoard" onClick={this.handleShow}>Add List</Button>
+                    <Button variant="primary" key="addList" onClick={this.handleShow}>Add List</Button>
                     <AddModal show={this.state.show}
                               handleShow={this.handleShow}
                               title={"Add List"}

@@ -45,7 +45,7 @@ class Cards extends Component {
         if (this.state.listCards.length !== 0) {
         }
         finalElement = this.state.listCards.map(listCrd => {
-            return (<Checklist handleCardDelete={this.handleCardDelete} card={listCrd}/>)
+            return (<Checklist key={listCrd.id} handleCardDelete={this.handleCardDelete} card={listCrd}/>)
         })
         return (
             <div>

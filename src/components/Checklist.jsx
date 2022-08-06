@@ -46,7 +46,7 @@ class Checklist extends Component {
         if (this.state.checklists.length !== 0) {
             allCheckList = this.state.checklists.map(CL => {
                 return (
-                    <Card>
+                    <Card key={CL.id}>
                         <Card.Body>
                             <Card.Header style={{display: "flex", justifyContent: "space-between"}}>
                                 {CL.name}
@@ -63,7 +63,7 @@ class Checklist extends Component {
         }
         return (
             <>
-                <Card>
+                <Card key={this.props.card.id}>
                     <Card.Body>
                         <Card.Title>{this.props.card.name}</Card.Title>
                         <Button variant="primary" onClick={() => this.props.handleCardDelete(this.props.card.id)}

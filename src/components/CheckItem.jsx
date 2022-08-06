@@ -50,10 +50,9 @@ class CheckItem extends Component {
         let status
         if (this.state.checkItems.length !== 0) {
             items = this.state.checkItems.map(item => {
-                console.log(item)
                 item.state === "complete" ? status = true : status = false
                 return (
-                    <InputGroup>
+                    <InputGroup key={item.id}>
                         <InputGroup.Checkbox
                             checked={status}
                             onChange={(e) => this.handleCheckItemUpdate(e.target.checked, item.id)}/>

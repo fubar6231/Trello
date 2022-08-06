@@ -45,9 +45,9 @@ class Home extends Component {
         let finalElement
         if (this.state.boards.length !== 0) {
             finalElement = this.state.boards.map(object => {
-                return (<Link style={{
+                return (<Link key={object.name} style={{
                     display: "flex", flexWrap: "wrap", width: "20%",
-                }} to={`/${object.id}`}><Card style={{width: '100%'}}>
+                }} to={`/${object.id}`}><Card  style={{width: '100%'}}>
                     <Card.Img variant="top"
                               src="https://media.istockphoto.com/photos/vintage-scratched-wooden-cutting-board-picture-id484854910?k=20&m=484854910&s=612x612&w=0&h=GRNaWpJoNfo4-yD_F9H95XYktpfwfb4fu519ysqmKww="/>
                     <Card.Body>
