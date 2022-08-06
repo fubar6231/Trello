@@ -1,78 +1,76 @@
 import React, {Component} from 'react';
-import axios from "axios";
-import {Card, Button, Modal, Form} from "react-bootstrap";
+import {Card, Button, Form} from "react-bootstrap";
+
+import * as ApiCall from "./ApiCall"
+import Checklist from "./Checklist";
+
 
 class Cards extends Component {
     constructor(props) {
         super(props);
-        this.state = {listCards: [],show:false}
+        this.state = {listCards: [], newCardName: "" }
     }
 
     componentDidMount() {
-        axios.get(`https://api.trello.com/1/lists/${this.props.listId}/cards`, {
-            params: {
-                key: "9762cda5d8c1ddc1bd0c8aba672a0faa",
-                token: "b04f1f278030c05434b88d797482e54152d6756957424c97daecc04bf6da9571"
-            }
-        }).then(object => {
+        ApiCall.GetCards(this.props.listId).then(object => {
             this.setState({listCards: object.data})
         })
     }
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        if(prevState.listCards !== this.state.listCards){
-            axios.get(`https://api.trello.com/1/lists/${this.props.listId}/cards`, {
-                params: {
-                    key: "9762cda5d8c1ddc1bd0c8aba672a0faa",
-                    token: "b04f1f278030c05434b88d797482e54152d6756957424c97daecc04bf6da9571"
+
+
+    handleCardDelete = (cardId) => {
+        ApiCall.RemoveCard(cardId).then(object => {
+            let listCards=this.state.listCards.filter(card=>{
+                if (card.id !== cardId) {
+                    return card
                 }
-            }).then(object => {
-                this.setState({listCards: object.data})
             })
+            this.setState({listCards})
+        }).catch(error => console.error(error))
+    }
+
+
+    handleCardAddition = (e) => {
+        e.preventDefault()
+        if (this.state.newCardName.length !== 0) {
+            ApiCall.AddCard(this.state.newCardName,this.props.listId).then(object => {
+                this.setState({listCards: [object.data,...this.state.listCards],newCardName:""})
+            }).catch(error => console.error(error))
         }
-    }
-
-    handleShow = () => {
-        this.setState({show:!this.state.show})
-    }
-
-    handleCardDelete=(cardId)=>{
-        axios.delete(`https://api.trello.com/1/cards/${cardId}`,{
-            params:{
-                key: "9762cda5d8c1ddc1bd0c8aba672a0faa",
-                token: "b04f1f278030c05434b88d797482e54152d6756957424c97daecc04bf6da9571"
-            }
-        })
     }
 
     render() {
         let finalElement
-        if (this.state.listCards.length !== 0) {}
-            finalElement=this.state.listCards.map(listCrd=>{
-                return(<Card>
+        if (this.state.listCards.length !== 0) {
+        }
+        finalElement = this.state.listCards.map(listCrd => {
+            return (<Checklist handleCardDelete={this.handleCardDelete} card={listCrd}/>)
+        })
+        return (
+            <div>
+                <Card>
                     <Card.Body>
-                        <Card.Title>{listCrd.name}</Card.Title>
-                        <Button variant="primary" onClick={()=>this.handleCardDelete(listCrd.id)} style={{margin:"1%"}}>Delete Card</Button>
-                        <Button variant="primary" key="addBoard" onClick={this.handleShow}>Open Card</Button>
-                        <Modal show={this.state.show} onHide={this.handleShow}>
-                            <Modal.Header closeButton>
-                                <Modal.Title>{listCrd.name}</Modal.Title>
-                            </Modal.Header>
-                            <Modal.Body>
-
-                            </Modal.Body>
-                            <Modal.Footer>
-                                <Button key="close" variant="secondary" onClick={this.handleShow}>Close</Button>
-                            </Modal.Footer>
-                        </Modal>
+                        <Form>
+                            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                                <Form.Label>Add Card</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    placeholder="Card Name"
+                                    value={this.state.newCardName}
+                                    onInput={e => this.setState({newCardName: e.target.value})}
+                                />
+                            </Form.Group>
+                            <Button key="add List" variant="primary" type="submit"
+                                    onClick={this.handleCardAddition}>
+                                Add
+                            </Button>
+                        </Form>
                     </Card.Body>
-                </Card>)
-            })
-            return (
-                <div>
                     {finalElement}
-                </div>
-            );
+                </Card>
+            </div>
+        );
 
     }
 }
