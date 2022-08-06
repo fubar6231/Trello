@@ -95,16 +95,4 @@ class CheckItem extends Component {
 
 export default CheckItem;
 
-// <Form>
-//     //     <Form.Group>
-//     //         <Form.Check type={"checkbox"}
-//                     checked={status}
-//                     label={item.name}
-//                     onChange={(e) => this.handleCheckItemUpdate(e.target.checked, item.id)}>
-//         </Form.Check>
-//         <Button onClick={e => this.handleCheckItemDelete(e, item.id)}>X</Button>
-//     </Form.Group>
-//
-//     {/*<CloseButton onClick={e => this.handleCheckItemDelete(e, item.id)}/>*/}
-// </Form>
 
