@@ -23,7 +23,7 @@ const mapDispatchToProps = (dispatch) => {
 
 class Board extends Component {
 
-    state = {lists: [], show: false, newCardName: ""}
+    state = {show: false, newCardName: ""}
 
 
 
