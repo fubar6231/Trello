@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import Button from "react-bootstrap/Button";
-import {Card,CardGroup} from "react-bootstrap";
-import {BrowserRouter as Router, Route, Switch, Link} from "react-router-dom";
+import {Card, CardGroup} from "react-bootstrap";
+import {BrowserRouter as Router, Link, Route, Switch} from "react-router-dom";
 import {connect} from "react-redux";
 
 import * as Actions from "./redux/Actions"
@@ -10,17 +10,20 @@ import * as ApiCall from "./ApiCall"
 import NavBar from "./navBar";
 import Board from "./board";
 
-const mapStateToProps=(state)=>{
-    if(state.boards){
+const mapStateToProps = (state) => {
+    if (state.boards) {
         return {boards: state.boards}
-    }else {
+    } else {
         return {boards: []}
     }
 
 }
 
-const mapDispatchToProps=(dispatch)=>{
-    return {getBoard: (object)=>dispatch(Actions.GetBoard(object))}
+const mapDispatchToProps = (dispatch) => {
+    return {
+        getBoard: (object) => dispatch(Actions.GetBoard(object)),
+        addBoard: (object) => dispatch(Actions.AddBoard(object))
+    }
 }
 
 class Home extends Component {
@@ -42,9 +45,9 @@ class Home extends Component {
 
     handleBoardAddition = (e) => {
         e.preventDefault()
-        if(this.state.newBoardName.length!==0){
+        if (this.state.newBoardName.length !== 0) {
             ApiCall.CreateBoard(this.state.newBoardName).then(object => {
-                this.setState({boards: [object.data,...this.state.boards]})
+                this.props.addBoard(object.data)
             }).catch(error => console.error(error))
         }
         this.handleShow()
@@ -61,7 +64,7 @@ class Home extends Component {
             finalElement = this.props.boards.map(object => {
                 return (<Link key={object.name} style={{
                     display: "flex", flexWrap: "wrap", width: "20%",
-                }} to={`/${object.id}`}><Card  style={{width: '100%'}}>
+                }} to={`/${object.id}`}><Card style={{width: '100%'}}>
                     <Card.Img variant="top"
                               src="https://media.istockphoto.com/photos/vintage-scratched-wooden-cutting-board-picture-id484854910?k=20&m=484854910&s=612x612&w=0&h=GRNaWpJoNfo4-yD_F9H95XYktpfwfb4fu519ysqmKww="/>
                     <Card.Body>
@@ -96,4 +99,4 @@ class Home extends Component {
     }
 }
 
-export default connect(mapStateToProps,mapDispatchToProps)(Home);
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
