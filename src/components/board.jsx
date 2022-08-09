@@ -5,16 +5,32 @@ import * as ApiCall from "./ApiCall"
 import AddModal from "./AddModal";
 import NavBar from "./navBar";
 import Cards from "./cards";
+import {connect} from "react-redux";
+import * as Actions from "./redux/Actions";
+
+const mapStateToProps = (state) => {
+    return {lists: state.lists}
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        getLists: (object) => dispatch(Actions.GetLists(object)),
+        addList: (object) => dispatch(Actions.AddList(object)),
+        deleteList: (object)=>dispatch(Actions.DeleteList(object))
+    }
+}
+
 
 class Board extends Component {
 
     state = {lists: [], show: false, newCardName: ""}
 
 
+
     componentDidMount() {
         let boardId = this.props.match.params.boardName
         ApiCall.GetLists(boardId).then(res => {
-            this.setState({lists: res.data})
+            this.props.getLists(res.data)
         }).catch(error => console.error(error))
     }
 
@@ -32,28 +48,28 @@ class Board extends Component {
         let boardId = this.props.match.params.boardName
         if (this.state.newListName.length !== 0) {
             ApiCall.AddList(this.state.newListName, boardId).then(res => {
-                this.setState({lists: [res.data, ...this.state.lists]})
+                this.props.addList(res.data)
             }).catch(error => console.error(error))
         }
         this.handleShow()
     }
 
     handleListDelete = (id) => {
-        ApiCall.RemoveList(id).then(res => {
-            let newList = this.state.lists.filter(list => {
+        ApiCall.RemoveList(id).then(() => {
+            let newList = this.props.lists.filter(list => {
                 if (list.id !== id) {
                     return list
                 }
             })
-            this.setState({lists: newList})
+            this.props.deleteList(newList)
         }).catch(error => console.error(error))
     }
 
 
     render() {
         let finalElement
-        if (this.state.lists.length !== 0) {
-            finalElement = this.state.lists.map((list) => {
+        if (this.props.lists.length !== 0) {
+            finalElement = this.props.lists.map((list) => {
                 return (
                     <Card key={list.id} style={{width: '300px', display: "inline-block"}}>
                         <Card.Body>
@@ -92,4 +108,4 @@ class Board extends Component {
     }
 }
 
-export default Board;
+export default connect(mapStateToProps, mapDispatchToProps)(Board);

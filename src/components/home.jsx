@@ -11,11 +11,7 @@ import NavBar from "./navBar";
 import Board from "./board";
 
 const mapStateToProps = (state) => {
-    if (state.boards) {
-        return {boards: state.boards}
-    } else {
-        return {boards: []}
-    }
+    return {boards: state.boards}
 
 }
 
@@ -28,7 +24,7 @@ const mapDispatchToProps = (dispatch) => {
 
 class Home extends Component {
     state = {
-        boards: [], show: false, newBoardName: ""
+        show: false, newBoardName: ""
     }
 
 
