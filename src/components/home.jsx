@@ -2,12 +2,26 @@ import React, {Component} from 'react';
 import Button from "react-bootstrap/Button";
 import {Card,CardGroup} from "react-bootstrap";
 import {BrowserRouter as Router, Route, Switch, Link} from "react-router-dom";
+import {connect} from "react-redux";
 
+import * as Actions from "./redux/Actions"
 import AddModal from "./AddModal";
 import * as ApiCall from "./ApiCall"
 import NavBar from "./navBar";
 import Board from "./board";
 
+const mapStateToProps=(state)=>{
+    if(state.boards){
+        return {boards: state.boards}
+    }else {
+        return {boards: []}
+    }
+
+}
+
+const mapDispatchToProps=(dispatch)=>{
+    return {getBoard: (object)=>dispatch(Actions.GetBoard(object))}
+}
 
 class Home extends Component {
     state = {
@@ -17,7 +31,7 @@ class Home extends Component {
 
     componentDidMount() {
         ApiCall.GetBoards().then(object => {
-            this.setState({boards: object.data})
+            this.props.getBoard(object.data)
         }).catch(error => <p>Boards Not Loaded</p>)
     }
 
@@ -43,8 +57,8 @@ class Home extends Component {
 
     render() {
         let finalElement
-        if (this.state.boards.length !== 0) {
-            finalElement = this.state.boards.map(object => {
+        if (this.props.boards.length !== 0) {
+            finalElement = this.props.boards.map(object => {
                 return (<Link key={object.name} style={{
                     display: "flex", flexWrap: "wrap", width: "20%",
                 }} to={`/${object.id}`}><Card  style={{width: '100%'}}>
@@ -82,4 +96,4 @@ class Home extends Component {
     }
 }
 
-export default Home;
+export default connect(mapStateToProps,mapDispatchToProps)(Home);

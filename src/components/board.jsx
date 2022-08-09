@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Card, Button, CardGroup, DropdownButton, Dropdown} from "react-bootstrap";
+import {Button, Card, CardGroup, Dropdown, DropdownButton} from "react-bootstrap";
 
 import * as ApiCall from "./ApiCall"
 import AddModal from "./AddModal";
@@ -32,14 +32,14 @@ class Board extends Component {
         let boardId = this.props.match.params.boardName
         if (this.state.newListName.length !== 0) {
             ApiCall.AddList(this.state.newListName, boardId).then(res => {
-                this.setState({lists: [res.data,...this.state.lists]})
+                this.setState({lists: [res.data, ...this.state.lists]})
             }).catch(error => console.error(error))
         }
         this.handleShow()
     }
 
     handleListDelete = (id) => {
-        ApiCall.RemoveList(id).then(res=>{
+        ApiCall.RemoveList(id).then(res => {
             let newList = this.state.lists.filter(list => {
                 if (list.id !== id) {
                     return list
@@ -48,7 +48,6 @@ class Board extends Component {
             this.setState({lists: newList})
         }).catch(error => console.error(error))
     }
-
 
 
     render() {

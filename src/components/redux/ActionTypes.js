@@ -1,5 +1,7 @@
-export  default actions ={
-    getBoard:getBoard,
-    addBoard:addBoard,
+const actionsTypes ={
+    getBoard:"getBoard",
+    addBoard:"addBoard",
 
 }
+
+export default actionsTypes
