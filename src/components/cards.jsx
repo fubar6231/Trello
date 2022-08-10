@@ -26,7 +26,7 @@ class Cards extends Component {
 
     componentDidMount() {
         ApiCall.GetCards(this.props.listId).then(res => {
-                this.props.getCards({cards:res.data, listId:this.props.listId})
+                this.props.getCards({cards: res.data, listId: this.props.listId})
             }
         )
     }
@@ -35,7 +35,7 @@ class Cards extends Component {
     handleCardDelete = (cardId) => {
         ApiCall.RemoveCard(cardId).then(() => {
             let listCards = this.props.listCards[this.props.listId].filter(card => card.id !== cardId)
-            this.props.deleteCard({updatedCards:listCards, listId:this.props.listId})
+            this.props.deleteCard({updatedCards: listCards, listId: this.props.listId})
         }).catch(error => console.error(error))
     }
 
@@ -44,7 +44,7 @@ class Cards extends Component {
         e.preventDefault()
         if (this.state.newCardName.length !== 0) {
             ApiCall.AddCard(this.state.newCardName, this.props.listId).then(res => {
-                this.props.addCard({card:res.data, listId:this.props.listId})
+                this.props.addCard({card: res.data, listId: this.props.listId})
                 this.setState({newCardName: ""})
             }).catch(error => console.error(error))
         }
@@ -52,11 +52,10 @@ class Cards extends Component {
 
     render() {
         let finalElement
-        let currentListCard=this.props.listCards[this.props.listId]
+        let currentListCard = this.props.listCards[this.props.listId]
 
 
-
-        if(currentListCard){
+        if (currentListCard) {
             finalElement = currentListCard.map(listCrd => {
                 return (<Checklist key={listCrd.id} handleCardDelete={this.handleCardDelete} card={listCrd}/>)
             })

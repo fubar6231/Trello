@@ -15,11 +15,17 @@ const reducer = (state = initialState, action) => {
         case actionsTypes.deleteList:
             return {...state, lists: action.payload}
         case actionsTypes.getCards:
-            return {...state, cardsByList: {...state.cardsByList,[action.payload.listId]: action.payload.cards}}
+            return {...state, cardsByList: {...state.cardsByList, [action.payload.listId]: action.payload.cards}}
         case actionsTypes.addCard:
-            return {...state, cardsByList:{...state.cardsByList,[action.payload.listId]: [...state.cardsByList[action.payload.listId],action.payload.card]}}
+            return {
+                ...state,
+                cardsByList: {
+                    ...state.cardsByList,
+                    [action.payload.listId]: [...state.cardsByList[action.payload.listId], action.payload.card]
+                }
+            }
         case actionsTypes.deleteCard:
-            return {...state, cardsByList: {...state.cardsByList,[action.payload.listId]: action.payload.updatedCards}}
+            return {...state, cardsByList: {...state.cardsByList, [action.payload.listId]: action.payload.updatedCards}}
         default:
             return state
     }
