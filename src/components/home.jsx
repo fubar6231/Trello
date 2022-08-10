@@ -17,7 +17,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        getBoard: (object) => dispatch(Actions.GetBoard(object)),
+        getBoard: (object) => dispatch(Actions.GetBoards(object)),
         addBoard: (object) => dispatch(Actions.AddBoard(object))
     }
 }
@@ -44,6 +44,7 @@ class Home extends Component {
         if (this.state.newBoardName.length !== 0) {
             ApiCall.CreateBoard(this.state.newBoardName).then(object => {
                 this.props.addBoard(object.data)
+                this.setState({newBoardName: ""})
             }).catch(error => console.error(error))
         }
         this.handleShow()

@@ -1,8 +1,8 @@
 import actionsTypes from "./ActionTypes";
 
-export const GetBoard=(boards)=>{
+export const GetBoards=(boards)=>{
     return{
-        type:actionsTypes.getBoard,
+        type:actionsTypes.getBoards,
         payload:boards
     }
 }
@@ -32,5 +32,25 @@ export const DeleteList=(list)=>{
     return{
         type:actionsTypes.deleteList,
         payload:list
+    }
+}
+
+export const GetCards=({cards, listId})=>{
+    return{
+        type:actionsTypes.getCards,
+        payload: {cards, listId}
+    }
+}
+
+export const AddCard=({card, listId})=>{
+    return{
+        type:actionsTypes.addCard,
+        payload: {card, listId}
+    }
+}
+export const DeleteCard=({updatedCards,listId})=>{
+    return{
+        type:actionsTypes.deleteCard,
+        payload: {updatedCards,listId}
     }
 }

@@ -1,32 +1,41 @@
 import React, {Component} from 'react';
-import {Card, Button, Form} from "react-bootstrap";
+import {Button, Card, Form} from "react-bootstrap";
 
 import * as ApiCall from "./ApiCall"
 import Checklist from "./Checklist";
+import * as Actions from "./redux/Actions";
+import {connect} from "react-redux";
 
+const mapStateToProps = (state) => {
+    return {listCards: state.cardsByList}
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        getCards: (object) => dispatch(Actions.GetCards(object)),
+        addCard: (object) => dispatch(Actions.AddCard(object)),
+        deleteCard: (object) => dispatch(Actions.DeleteCard(object))
+    }
+}
 
 class Cards extends Component {
     constructor(props) {
         super(props);
-        this.state = {listCards: [], newCardName: "" }
+        this.state = {newCardName: ""}
     }
 
     componentDidMount() {
-        ApiCall.GetCards(this.props.listId).then(object => {
-            this.setState({listCards: object.data})
-        })
+        ApiCall.GetCards(this.props.listId).then(res => {
+                this.props.getCards({cards:res.data, listId:this.props.listId})
+            }
+        )
     }
 
 
-
     handleCardDelete = (cardId) => {
-        ApiCall.RemoveCard(cardId).then(object => {
-            let listCards=this.state.listCards.filter(card=>{
-                if (card.id !== cardId) {
-                    return card
-                }
-            })
-            this.setState({listCards})
+        ApiCall.RemoveCard(cardId).then(() => {
+            let listCards = this.props.listCards[this.props.listId].filter(card => card.id !== cardId)
+            this.props.deleteCard({updatedCards:listCards, listId:this.props.listId})
         }).catch(error => console.error(error))
     }
 
@@ -34,19 +43,25 @@ class Cards extends Component {
     handleCardAddition = (e) => {
         e.preventDefault()
         if (this.state.newCardName.length !== 0) {
-            ApiCall.AddCard(this.state.newCardName,this.props.listId).then(object => {
-                this.setState({listCards: [object.data,...this.state.listCards],newCardName:""})
+            ApiCall.AddCard(this.state.newCardName, this.props.listId).then(res => {
+                this.props.addCard({card:res.data, listId:this.props.listId})
+                this.setState({newCardName: ""})
             }).catch(error => console.error(error))
         }
     }
 
     render() {
         let finalElement
-        if (this.state.listCards.length !== 0) {
+        let currentListCard=this.props.listCards[this.props.listId]
+
+
+
+        if(currentListCard){
+            finalElement = currentListCard.map(listCrd => {
+                return (<Checklist key={listCrd.id} handleCardDelete={this.handleCardDelete} card={listCrd}/>)
+            })
         }
-        finalElement = this.state.listCards.map(listCrd => {
-            return (<Checklist key={listCrd.id} handleCardDelete={this.handleCardDelete} card={listCrd}/>)
-        })
+
         return (
             <div>
                 <Card>
@@ -75,4 +90,4 @@ class Cards extends Component {
     }
 }
 
-export default Cards;
+export default connect(mapStateToProps, mapDispatchToProps)(Cards);

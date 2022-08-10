@@ -16,15 +16,14 @@ const mapDispatchToProps = (dispatch) => {
     return {
         getLists: (object) => dispatch(Actions.GetLists(object)),
         addList: (object) => dispatch(Actions.AddList(object)),
-        deleteList: (object)=>dispatch(Actions.DeleteList(object))
+        deleteList: (object) => dispatch(Actions.DeleteList(object))
     }
 }
 
 
 class Board extends Component {
 
-    state = {show: false, newCardName: ""}
-
+    state = {show: false, newListName: ""}
 
 
     componentDidMount() {
@@ -49,6 +48,7 @@ class Board extends Component {
         if (this.state.newListName.length !== 0) {
             ApiCall.AddList(this.state.newListName, boardId).then(res => {
                 this.props.addList(res.data)
+                this.setState({newListName: ""})
             }).catch(error => console.error(error))
         }
         this.handleShow()
